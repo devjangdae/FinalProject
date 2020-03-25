@@ -38,3 +38,21 @@ arvr연계 시나리오 명확히 완성도를 높게 해야한다.  - 교육에
 나동빈 유니티 기초 설명 https://youtu.be/POqq6P4Iz3Y
 유니티 팀즈https://unity.com/kr/unity/features/collaborate (x)
 깃허브 repo https://github.com/BlackMarine/FinalProject.git
+
+3/25
+역사 틀을 짜서 설명하기도 쉽게, 개발하기도 쉽게 
+언어의역사, 영화의역사, 로봇의역사 퀴즈들 만들기
+초~중학생들의 수준에 맞게끔 하는것이 바람직! 연령층 - 초중학생
+책이나역사찾아서 문제만들기
+
+논문
+https://www.ssrn.com/index.cfm/en/
+http://www.riss.kr/index.do
+
+내일할일
+다음주 발표준비
+
+3d 그래픽 Standard Asserts
+
+최종 손그림으로 이미지 그려보기!
+맵구성, 틀 
