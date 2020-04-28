@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 2af3c9b22b87a51438d9acfdb1484dcd
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: TTTogether
+  fontNames:
+  - TTTogether
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 7ed41a9538921724d976b1c9000221c2, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
