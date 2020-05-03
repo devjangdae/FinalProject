@@ -11,8 +11,13 @@ using PlayFab.ClientModels;
 using Photon.Pun;
 using Photon.Realtime;
 
+// 개인룸 유저정보볼때 이용 해시테이블
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-// PUN 콜백이용 로그인
+
+
+
+// PUN 콜백이용 
 public class NetMgr : MonoBehaviourPunCallbacks
 {
     // Start is called before the first frame update
@@ -27,21 +32,22 @@ public class NetMgr : MonoBehaviourPunCallbacks
     [Header("Lobby")]
     public InputField UserNickNameInput;
     public Text LobbyInfoText, UserNickNameText;
-
     bool isLoaded;
+
+
 
     //void Start()
     //{
 
     //}
 
-    // Update is called once per frame
-    //void Update()
-    //{
-    //    LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + "로비 / " + PhotonNetwork.CountOfPlayers + "접속";
-    //}
+    //Update is called once per frame
+    void Update()
+    {
+        LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + "로비 / " + PhotonNetwork.CountOfPlayers + "접속";
+    }
 
-    #region 
+    #region 로그인
 
     //네트워크속도
     void Awake()
@@ -113,7 +119,16 @@ public class NetMgr : MonoBehaviourPunCallbacks
         };
         PlayFabClientAPI.UpdateUserData(request, (result) => { Debug.Log("플레이어 데이터 저장 성공함"); }, (error) => Debug.Log("아,, 플레이어 데이터 저장 실패")) ;
     }
-    #endregion
+
+    // 개인 룸 정보 가져오기
+    //void GetData(string curID)
+    //{
+    //    PlayFabClientAPI.GetUserData(new GetUserDataRequest() { PlayFabId = curID }, (result) =>
+    //    UserHouseDataText.text = curID + "\n" + result.Data["Home"].Value,
+    //    (error) => print("데이터 불러오기 실패"));
+    //}
+
+    #endregion 로그인
 
 
 
@@ -148,6 +163,7 @@ public class NetMgr : MonoBehaviourPunCallbacks
     void ShowPanel(GameObject CurPanel)
     {
         LobbyPanel.SetActive(false);
+
         DisconnectPanel.SetActive(false);
 
         CurPanel.SetActive(true);
@@ -180,8 +196,11 @@ public class NetMgr : MonoBehaviourPunCallbacks
     #endregion
 
 
-    //유저 방
-    public void JoinOrCreateRoom(string roomName) { }
+    #region 방
+    public void JoinOrCreateRoom(string roomName)
+    { }
+    #endregion
+
 
 
 
