@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Project_Play/Scenes/LoginScene.unity
+- path: Assets/Project_Play/Scenes/SelectScene.unity
   isLoaded: 1
   isActive: 1
