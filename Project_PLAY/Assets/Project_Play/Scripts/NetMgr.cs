@@ -17,7 +17,7 @@ public class NetMgr : MonoBehaviourPunCallbacks
 {
     // Start is called before the first frame update
 
-    public GameObject DisconnectPanel, LobbyPanel, RoomPanel;
+    public GameObject DisconnectPanel, LobbyPanel, RoomPanel, LeaderBoardPanel;
 
     [Header("Login")]
     public PlayerLeaderboardEntry MyPlayFabInfo;
@@ -46,6 +46,7 @@ public class NetMgr : MonoBehaviourPunCallbacks
     [Header("ETC")]
     public Text StatusText;
     public PhotonView PV;
+    public Text LogText;
 
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
@@ -185,6 +186,7 @@ public class NetMgr : MonoBehaviourPunCallbacks
         LobbyPanel.SetActive(false);
         DisconnectPanel.SetActive(false);
         RoomPanel.SetActive(false);
+        LeaderBoardPanel.SetActive(false);
 
         CurPanel.SetActive(true);
     }
@@ -354,4 +356,24 @@ public class NetMgr : MonoBehaviourPunCallbacks
 
     //유저 상점,통계 추가개발
     public void JoinOrCreateRoom(string roomName) { }
+
+    //통계 playfab 리더보드를 리더보드 패널에 통계 출력
+    public void GetLeaderboard()
+    {
+        ShowPanel(LeaderBoardPanel);
+        var request = new GetLeaderboardRequest { StartPosition = 0, StatisticName = "IDInfo", MaxResultsCount = 20, ProfileConstraints = new PlayerProfileViewConstraints() { ShowLocations = true, ShowDisplayName = true } };
+        PlayFabClientAPI.GetLeaderboard(request, (result) =>
+        {
+            for (int i = 0; i < result.Leaderboard.Count; i++)
+            {
+                var curBoard = result.Leaderboard[i];
+                LogText.text += curBoard.Profile.Locations[0].CountryCode.Value + " / " + curBoard.DisplayName + " / " + curBoard.StatValue + "\n";
+            }
+        },
+        (error) => print("리더보드 불러오기 실패"));
+    }
+    public void LeaveBoardBtn()
+    {
+        ShowPanel(LobbyPanel);
+    }
 }

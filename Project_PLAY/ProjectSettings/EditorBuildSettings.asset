@@ -8,9 +8,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Project_Play/Scenes/StartScene.unity
     guid: 356e9926b1862bd4d91ff140649090c1
-  - enabled: 1
-    path: Assets/Project_Play/Scenes/Login Scene.unity
-    guid: 17cb14164a8321147abd2ad58253a276
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Project_Play/Scenes/SettingsScene.unity
     guid: 0330f53a13527f244b24af3806a27bca
