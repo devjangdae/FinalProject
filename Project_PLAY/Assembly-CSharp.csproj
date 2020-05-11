@@ -53,8 +53,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\8K Skybox Pack Free\Example Scenes\Script\RotateCamera.cs" />
-     <Compile Include="Assets\HolyShift\Scripts\CheckForStandardAssets.cs" />
      <Compile Include="Assets\Photon\PhotonChat\Demos\Common\EventSystemSpawner.cs" />
      <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
      <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextButtonTransition.cs" />
@@ -67,6 +65,8 @@
      <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
      <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\NamePickGui.cs" />
      <Compile Include="Assets\Photon\PhotonRealtime\Demos\DemoLoadBalancing\ConnectAndJoinRandomLb.cs" />
+     <Compile Include="Assets\Project_Play\Asset\8K Skybox Pack Free\Example Scenes\Script\RotateCamera.cs" />
+     <Compile Include="Assets\Project_Play\Asset\HolyShift\Scripts\CheckForStandardAssets.cs" />
      <Compile Include="Assets\Project_Play\Scripts\ButtonEvent.cs" />
      <Compile Include="Assets\Project_Play\Scripts\CharacterController.cs" />
      <Compile Include="Assets\Project_Play\Scripts\NetMgr.cs" />
@@ -83,23 +83,23 @@
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\Photon\PhotonLibs\changes-library.txt" />
-     <None Include="Assets\Kenney Assets\Castle Kit\License.txt" />
+     <None Include="Assets\Project_Play\Asset\Kenney Assets\Castle Kit\License.txt" />
      <None Include="Assets\Project_Play\Asset\pixeluipack\Spritesheet\spritesheetInfo.txt" />
-     <None Include="Assets\HolyShift\readme.txt" />
+     <None Include="Assets\Project_Play\Asset\HolyShift\readme.txt" />
      <None Include="Assets\Photon\PhotonUnityNetworking\link.xml" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
      <None Include="Assets\Photon\PhotonLibs\Photon3Unity3D.xml" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
-     <None Include="Assets\HolyShift\Shaders\WaterInclude.cginc" />
-     <None Include="Assets\Five Seamless Tileable Ground Textures\read me.txt" />
-     <None Include="Assets\3D Decals Pack\README INFO.txt" />
-     <None Include="Assets\Fantasy Forest Environment Free Sample\StandardNoCulling.shader" />
+     <None Include="Assets\Project_Play\Asset\HolyShift\Shaders\WaterInclude.cginc" />
+     <None Include="Assets\Project_Play\Asset\Five Seamless Tileable Ground Textures\read me.txt" />
+     <None Include="Assets\Project_Play\Asset\3D Decals Pack\README INFO.txt" />
+     <None Include="Assets\Project_Play\Asset\Fantasy Forest Environment Free Sample\StandardNoCulling.shader" />
      <None Include="Assets\Project_Play\Asset\pixeluipack\License.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
-     <None Include="Assets\Ground materials FD\Information package.txt" />
+     <None Include="Assets\Project_Play\Asset\Ground materials FD\Information package.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_SDF-Mobile Masking.shader" />
-     <None Include="Assets\8K Skybox Pack Free\ReadMe.txt" />
+     <None Include="Assets\Project_Play\Asset\8K Skybox Pack Free\ReadMe.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_Bitmap-Mobile.shader" />
      <None Include="Assets\Project_Play\Asset\castle-kit-1.0\License.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_SDF Overlay.shader" />
@@ -116,9 +116,9 @@
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_Sprite.shader" />
      <None Include="Assets\Photon\PhotonUnityNetworking\changelog.txt" />
      <None Include="Assets\Project_Play\Fonts Asset\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface.shader" />
-     <None Include="Assets\animated-characters-2\License.txt" />
+     <None Include="Assets\Project_Play\Asset\animated-characters-2\License.txt" />
      <None Include="Assets\SampleScenes\Shaders\Skybox-Procedural.shader" />
-     <None Include="Assets\HolyShift\Shaders\FXWaterLowpoly.shader" />
+     <None Include="Assets\Project_Play\Asset\HolyShift\Shaders\FXWaterLowpoly.shader" />
  <Reference Include="Unity.TextMeshPro.Editor">
  <HintPath>C:/Users/백태현/Desktop/2014244071/Project_PLAY/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
  </Reference>

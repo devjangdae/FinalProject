@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Project_Play/Scenes/SelectScene.unity
+- path: Assets/Project_Play/Scenes/New Scene.unity
   isLoaded: 1
   isActive: 1
