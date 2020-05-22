@@ -25,6 +25,9 @@ public class NetMgr : MonoBehaviourPunCallbacks
     public InputField EmailInput, PasswordInput, UsernameInput;
 
 
+    public GameObject Billboard;
+
+
     [Header("Lobby")]
     public InputField UserNickNameInput;
     public Text LobbyInfoText, UserNickNameText;//크아 로비에 있는 플레이어들 모티브
@@ -43,10 +46,20 @@ public class NetMgr : MonoBehaviourPunCallbacks
     public Text ListText;
     public Text RoomInfoText;
 
+    public Button ReadyOrStartBtn;
+    public Sprite[] ReadyOrStartSprite;
+
     [Header("ETC")]
     public Text StatusText;
     public PhotonView PV;
     public Text LogText;
+
+
+    [Header("Private")]
+    private bool readyDelay;
+    private bool counting;
+    private WaitForSeconds delay1 = new WaitForSeconds(1f);
+
 
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
@@ -376,4 +389,203 @@ public class NetMgr : MonoBehaviourPunCallbacks
     {
         ShowPanel(LobbyPanel);
     }
+
+    //#################################################################################################
+    #region Set Get
+    private void SetRoomTag(int slotIndex, int value)
+    {
+        Room currentRoom = PhotonNetwork.CurrentRoom;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)slotIndex.ToString(), (object)value);
+        currentRoom.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private int GetRoomTag(int slotIndex)
+    {
+        object customProperty = PhotonNetwork.CurrentRoom.CustomProperties[(object)slotIndex.ToString()];
+        return customProperty == null ? 0 : (int)customProperty;
+    }
+
+    private Player GetPlayer(int slotIndex)
+    {
+        int roomTag = this.GetRoomTag(slotIndex);
+        for (int index = 0; index < PhotonNetwork.PlayerList.Length; ++index)
+        {
+            if (PhotonNetwork.PlayerList[index].ActorNumber == roomTag)
+                return PhotonNetwork.PlayerList[index];
+        }
+        return (Player)null;
+    }
+
+    private void SetLocalTag(string key, bool value)
+    {
+        Player localPlayer = PhotonNetwork.LocalPlayer;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)key, (object)value);
+        localPlayer.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private bool GetLocalTag(string key)
+    {
+        object customProperty = PhotonNetwork.LocalPlayer.CustomProperties[(object)key];
+        return customProperty != null && (bool)customProperty;
+    }
+
+    private void SetTag(string key, object value, Player player = null)
+    {
+        if (player == null)
+            player = PhotonNetwork.LocalPlayer;
+        Player player1 = player;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)key, value);
+        player1.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private object GetTag(string key, Player player = null)
+    {
+        if (player == null)
+            player = PhotonNetwork.LocalPlayer;
+        return player.CustomProperties[(object)key];
+    }
+
+    private bool isMaster()
+    {
+        return PhotonNetwork.LocalPlayer.IsMasterClient;
+    }
+
+    //private void SetItemTag()
+    //{
+    //    Item obj = this.AllItems.Find((Predicate<Item>)(x => x.isUsing));
+    //    Player localPlayer = PhotonNetwork.LocalPlayer;
+    //    ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+    //    propertiesToSet.Add((object)"Car", (object)obj.Name);
+    //    localPlayer.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    //    this.PreviewCarImage.sprite = this.CarSprites[int.Parse(obj.Index)];
+    //    for (int index = 0; index < this.ItemSlot.Length; ++index)
+    //        this.ItemSlot[index].GetChild(2).gameObject.SetActive(this.AllItems[index].isUsing);
+    //}
+    #endregion
+
+    //###################################################################################################################
+
+    #region 게임시작
+    public void ReadyOrStart(bool isClick)
+    {
+        if (isClick && this.readyDelay)
+            return;
+
+        // 방장은 준비상태 false, 사람들은 클릭시 준비상태 변경
+        bool flag1 = this.GetLocalTag("isReady");
+        if (this.isMaster())
+        {
+            flag1 = false;
+            //this.MyItemBtn.interactable = true;
+            this.SetLocalTag("isReady", flag1);
+            if (isClick)
+                this.GameStart();
+        }
+        else if (isClick)
+        {
+            flag1 = !flag1;
+            this.SetLocalTag("isReady", flag1);
+            this.ReadyOrStartBtn.interactable = false;
+            this.readyDelay = true;
+            this.Invoke("ReadyDelay", 0.5f);
+        }
+
+
+        // 방장이 아님 || 2인이상 모두 준비될 때 시작가능
+        bool flag2 = true;
+        for (int index = 0; index < PhotonNetwork.PlayerList.Length; ++index)
+        {
+            Player player = PhotonNetwork.PlayerList[index];
+            if (!player.IsMasterClient && (this.GetTag("isReady", player) != null && !(bool)this.GetTag("isReady", player) || this.GetTag("isRepair", player) != null && (bool)this.GetTag("isRepair", player)))
+            {
+                flag2 = false;
+                break;
+            }
+        }
+        this.ReadyOrStartBtn.interactable = !this.isMaster() || flag2 && PhotonNetwork.PlayerList.Length > 1;
+        this.ReadyOrStartBtn.GetComponent<Image>().sprite = this.isMaster() ? this.ReadyOrStartSprite[0] : (flag1 ? this.ReadyOrStartSprite[2] : this.ReadyOrStartSprite[1]);
+
+
+        // 모두 준비됐고, 빈 방이 없어야 카운트 다운
+        bool flag3 = false;
+        for (int slotIndex = 0; slotIndex < 8; ++slotIndex)
+        {
+            if (this.GetRoomTag(slotIndex) == 0)
+                flag3 = true;
+        }
+        if (flag2 && !flag3 && !this.counting)
+        {
+            this.StartCoroutine("Countdown");
+        }
+        else
+        {
+            if (!this.counting || !(!flag2 | flag3))
+                return;
+            //타이머 내려가는 중에, 취소하면
+            this.counting = false;
+            this.StopCoroutine("Countdown");
+            this.ReadyOrStartBtn.transform.GetChild(0).gameObject.SetActive(true);
+            this.ReadyOrStartBtn.transform.GetChild(1).GetComponent<Text>().text = "";
+        }
+    }
+
+    private void ReadyDelay()
+    {
+        this.readyDelay = false;
+        this.ReadyOrStartBtn.interactable = true;
+    }
+
+    private IEnumerator Countdown()
+    {
+        this.counting = true;
+        this.ReadyOrStartBtn.transform.GetChild(0).gameObject.SetActive(false);
+        Text CountdownText = this.ReadyOrStartBtn.transform.GetChild(1).GetComponent<Text>();
+        CountdownText.text = "9";
+        yield return (object)this.delay1;
+        CountdownText.text = "8";
+        yield return (object)this.delay1;
+        CountdownText.text = "7";
+        yield return (object)this.delay1;
+        CountdownText.text = "6";
+        yield return (object)this.delay1;
+        CountdownText.text = "5";
+        yield return (object)this.delay1;
+        CountdownText.text = "4";
+        yield return (object)this.delay1;
+        CountdownText.text = "3";
+        yield return (object)this.delay1;
+        CountdownText.text = "2";
+        yield return (object)this.delay1;
+        CountdownText.text = "1";
+        yield return (object)this.delay1;
+        this.counting = false;
+        this.GameStart();
+    }
+
+    private void GameStart()
+    {
+        if (!this.isMaster())
+            return;
+        this.PV.RPC("BillboardRPC", RpcTarget.All);
+        for (int index = 0; index < PhotonNetwork.PlayerList.Length; ++index)
+        {
+            Player player = PhotonNetwork.PlayerList[index];
+            ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+            propertiesToSet.Add((object)"isReady", (object)false);
+            player.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+        }
+        PhotonNetwork.CurrentRoom.IsOpen = false;
+        PhotonNetwork.CurrentRoom.IsVisible = false;
+        PhotonNetwork.LoadLevel(1);
+    }
+
+    [PunRPC]
+    private void BillboardRPC()
+    {
+        this.Billboard.SetActive(true);
+    }
+    #endregion
 }

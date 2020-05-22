@@ -37,6 +37,7 @@ MonoBehaviour:
   - Fire
   - RespawnSpaceship
   - ChatRPC
+  - BillboardRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1
