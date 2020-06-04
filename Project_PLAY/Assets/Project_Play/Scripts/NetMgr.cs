@@ -48,13 +48,51 @@ public class NetMgr : MonoBehaviourPunCallbacks
     public PhotonView PV;
     public Text LogText;
 
+    public Transform[] PlayerSlot;
+    public RectTransform[] BubbleViewport;
+
     List<RoomInfo> myList = new List<RoomInfo>();
     int currentPage = 1, maxPage, multiple;
 
 
     void Start()
     {
+        int width = 0;
+        int height = 0;
+        int num = PlayerPrefs.GetInt("ResolutionIndex", 0);
+        bool fullscreen = PlayerPrefs.GetInt("FullScreen", 1) == 1;
+        switch (num)
+        {
+            case 0:
+                width = 1920;
+                height = 1080;
+                break;
+            case 1:
+                width = 1792;
+                height = 1008;
+                break;
+            case 2:
+                width = 1600;
+                height = 900;
+                break;
+            case 3:
+                width = 1366;
+                height = 768;
+                break;
+            case 4:
+                width = 1280;
+                height = 720;
+                break;
+            case 5:
+                width = 960;
+                height = 540;
+                break;
+        }
+        Screen.SetResolution(width, height, fullscreen);
 
+        PhotonNetwork.SendRate = 60;
+        PhotonNetwork.SerializationRate = 30;
+        PhotonNetwork.AutomaticallySyncScene = true;
     }
 
     // Update is called once per frame
@@ -63,6 +101,7 @@ public class NetMgr : MonoBehaviourPunCallbacks
         //현재 포톤 상태 출력, 로비에 (1로비 1접속) 상태텍스트변경
         StatusText.text = PhotonNetwork.NetworkClientState.ToString();
         LobbyInfoText.text = (PhotonNetwork.CountOfPlayers - PhotonNetwork.CountOfPlayersInRooms) + "로비 / " + PhotonNetwork.CountOfPlayers + "접속";
+        
     }
 
     #region 로그인 playfab
@@ -140,6 +179,69 @@ public class NetMgr : MonoBehaviourPunCallbacks
     #endregion
 
 
+    #region Set Get
+    private void SetRoomTag(int slotIndex, int value)
+    {
+        Room currentRoom = PhotonNetwork.CurrentRoom;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)slotIndex.ToString(), (object)value);
+        currentRoom.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private int GetRoomTag(int slotIndex)
+    {
+        object customProperty = PhotonNetwork.CurrentRoom.CustomProperties[(object)slotIndex.ToString()];
+        return customProperty == null ? 0 : (int)customProperty;
+    }
+
+    private Player GetPlayer(int slotIndex)
+    {
+        int roomTag = this.GetRoomTag(slotIndex);
+        for (int index = 0; index < PhotonNetwork.PlayerList.Length; ++index)
+        {
+            if (PhotonNetwork.PlayerList[index].ActorNumber == roomTag)
+                return PhotonNetwork.PlayerList[index];
+        }
+        return (Player)null;
+    }
+
+    private void SetLocalTag(string key, bool value)
+    {
+        Player localPlayer = PhotonNetwork.LocalPlayer;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)key, (object)value);
+        localPlayer.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private bool GetLocalTag(string key)
+    {
+        object customProperty = PhotonNetwork.LocalPlayer.CustomProperties[(object)key];
+        return customProperty != null && (bool)customProperty;
+    }
+
+    private void SetTag(string key, object value, Player player = null)
+    {
+        if (player == null)
+            player = PhotonNetwork.LocalPlayer;
+        Player player1 = player;
+        ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+        propertiesToSet.Add((object)key, value);
+        player1.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+    }
+
+    private object GetTag(string key, Player player = null)
+    {
+        if (player == null)
+            player = PhotonNetwork.LocalPlayer;
+        return player.CustomProperties[(object)key];
+    }
+
+    private bool isMaster()
+    {
+        return PhotonNetwork.LocalPlayer.IsMasterClient;
+    }
+
+    #endregion
 
 
     #region 로비
@@ -232,6 +334,42 @@ public class NetMgr : MonoBehaviourPunCallbacks
         RoomRenewal();
         ChatInput.text = "";
         for (int i = 0; i < ChatText.Length; i++) ChatText[i].text = ""; //채팅창도 비우기#
+
+        //초기화
+        this.SetLocalTag("isReady", false);
+        //this.SetLocalTag("isRepair", false); // 지우기 //
+        //this.ChatText.text = "";  // 지우기 // 
+        //this.ChatInput.text = "";// 지우기 //
+
+
+        if (this.isMaster())
+        {
+            // 방을 만든 사람은 0에 자기번호, 참여가능 슬롯은 0, 참여불가능 슬롯은 -1 저장은 무조건 Set으로 해야함
+            int num = (int)PhotonNetwork.CurrentRoom.MaxPlayers - 1;
+            Room currentRoom = PhotonNetwork.CurrentRoom;
+            ExitGames.Client.Photon.Hashtable propertiesToSet = new ExitGames.Client.Photon.Hashtable();
+            propertiesToSet.Add((object)"0", (object)PhotonNetwork.LocalPlayer.ActorNumber);
+            propertiesToSet.Add((object)"1", (object)0);
+            propertiesToSet.Add((object)"2", (object)(2 <= num ? 0 : -1));
+            propertiesToSet.Add((object)"3", (object)(3 <= num ? 0 : -1));
+            propertiesToSet.Add((object)"4", (object)(4 <= num ? 0 : -1));
+            propertiesToSet.Add((object)"5", (object)(5 <= num ? 0 : -1));
+            propertiesToSet.Add((object)"6", (object)(6 <= num ? 0 : -1));
+            propertiesToSet.Add((object)"7", (object)(7 <= num ? 0 : -1));
+            currentRoom.SetCustomProperties(propertiesToSet, (ExitGames.Client.Photon.Hashtable)null, (WebFlags)null);
+        }
+        // 참가한 사람은 참여가능 슬롯이면 자기 번호 대입
+        else
+        {
+            for (int slotIndex = 0; slotIndex < 8; ++slotIndex)
+            {
+                if (this.GetRoomTag(slotIndex) == 0)
+                {
+                    this.SetRoomTag(slotIndex, PhotonNetwork.LocalPlayer.ActorNumber);
+                    break;
+                }
+            }
+        }
     }
 
     //방 생성실패 , 빠른시작 실패
@@ -375,5 +513,23 @@ public class NetMgr : MonoBehaviourPunCallbacks
     public void LeaveBoardBtn()
     {
         ShowPanel(LobbyPanel);
+    }
+
+    //클릭
+    private IEnumerator BubbleShow(string nickName, string msg, int slotNum)
+    {
+        this.PlayerSlot[slotNum].GetChild(5).gameObject.SetActive(true);
+        this.BubbleViewport[slotNum].parent.gameObject.SetActive(true);
+        this.BubbleViewport[slotNum].GetComponentInChildren<Text>().text = nickName;
+        this.BubbleViewport[slotNum].GetChild(1).GetComponent<Text>().text = msg;
+        this.Fit(this.BubbleViewport[slotNum].GetChild(1).GetComponent<RectTransform>());
+        this.Fit(this.BubbleViewport[slotNum]);
+        yield return (object)new WaitForSeconds(0.05f);
+        yield return (object)new WaitForSeconds(4f);
+        this.PlayerSlot[slotNum].GetChild(5).gameObject.SetActive(false);
+    }
+    private void Fit(RectTransform rect)
+    {
+        LayoutRebuilder.ForceRebuildLayoutImmediate(rect);
     }
 }
